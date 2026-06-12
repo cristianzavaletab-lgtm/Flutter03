@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const empresasRouter = require('./routes/empresas');
 
-require('dotenv').config({ path: 'D:\\Descargas\\crud_withnodejs\\backend\\.env' });
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 app.use(cors());
