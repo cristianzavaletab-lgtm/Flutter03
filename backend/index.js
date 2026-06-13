@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const empresasRouter = require('./routes/empresas');
+const empleadosRouter = require('./routes/empleados');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.get('/', (req, res) => res.send({ ok: true }));
 app.use('/api/empresas', empresasRouter);
+app.use('/api/empresas/:empresaId/empleados', empleadosRouter);
 
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));

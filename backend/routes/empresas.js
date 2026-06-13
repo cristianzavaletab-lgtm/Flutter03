@@ -14,10 +14,13 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { nombre, direccion, telefono } = req.body;
+    const { nombre, direccion, ruc, rubro, esactivo } = req.body;
+    if (!nombre || !ruc) {
+      return res.status(400).json({ error: 'Nombre y RUC son obligatorios.' });
+    }
     const result = await db.query(
-      'INSERT INTO empresas (nombre, direccion, telefono) VALUES ($1, $2, $3) RETURNING *',
-      [nombre, direccion, telefono]
+      'INSERT INTO empresas (nombre, direccion, ruc, rubro, esactivo) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [nombre, direccion, ruc, rubro, esactivo ?? true]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -29,11 +32,17 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, direccion, telefono } = req.body;
+    const { nombre, direccion, ruc, rubro, esactivo } = req.body;
+    if (!nombre || !ruc) {
+      return res.status(400).json({ error: 'Nombre y RUC son obligatorios.' });
+    }
     const result = await db.query(
-      'UPDATE empresas SET nombre=$1, direccion=$2, telefono=$3 WHERE id=$4 RETURNING *',
-      [nombre, direccion, telefono, id]
+      'UPDATE empresas SET nombre=$1, direccion=$2, ruc=$3, rubro=$4, esactivo=$5, updated_at=now() WHERE id=$6 RETURNING *',
+      [nombre, direccion, ruc, rubro, esactivo ?? true, id]
     );
+    if (!result.rows.length) {
+      return res.status(404).json({ error: 'Empresa no encontrada.' });
+    }
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
